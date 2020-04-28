@@ -58,6 +58,7 @@ public class KubCronControllerFabric8 implements KubCronController {
                 .addNewContainer()
                 .withName(name)
                 .withImage(imageName)
+                .withImagePullPolicy("Never")
                 .addNewPort().withContainerPort(80).endPort()
                 .endContainer()
                 .endSpec()
@@ -107,5 +108,22 @@ public class KubCronControllerFabric8 implements KubCronController {
         client.batch().cronjobs().inNamespace(namespace).withName(name).delete();
     }
 
+    public void suspendCronJob(String namespace, String name) {
+        client.batch().cronjobs().inNamespace(namespace).withName(name)
+                .edit()
+                .editSpec()
+                .withSuspend(true)
+                .endSpec()
+                .done();
+    }
+
+    public void resumeCronJob(String namespace, String name) {
+        client.batch().cronjobs().inNamespace(namespace).withName(name)
+                .edit()
+                .editSpec()
+                .withSuspend(false)
+                .endSpec()
+                .done();
+    }
 
 }
